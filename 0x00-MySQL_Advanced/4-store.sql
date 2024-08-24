@@ -2,6 +2,7 @@
 
 CREATE TRIGGER after_adding_order
 AFTER INSERT ON oders
+FOR EACH ROW
 UPDATE items
 SET quantity = quantity - NEW.number
 WHERE name = NEW.item_name;
