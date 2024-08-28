@@ -2,4 +2,4 @@
 // With atttribute "name" and value "Holberton school".
 // Database name is to be passed as an option in mongo command
 
-db.school.insert({name: "Holberton school})
+db.school.insert({name: "Holberton school"})
