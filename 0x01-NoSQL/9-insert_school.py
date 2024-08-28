@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from pymongo import MongoClient
-"""Insert a document"""
+"""Insert a document in a collection using **kwargs
+   Prototype: def insert_school(mongo_collection, **kwargs):
+"""
 
 
 def insert_school(mongo_collection, **kwargs):
