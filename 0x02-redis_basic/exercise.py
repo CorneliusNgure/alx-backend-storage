@@ -52,6 +52,7 @@ def call_history(method: Callable) -> Callable:
 
     return wrapper
 
+
 def replay(method: Callable) -> None:
     """
     Displays the history of calls for a given function.
@@ -62,19 +63,19 @@ def replay(method: Callable) -> None:
     Returns:
         None
     """
-    key = method.__qualname__
-    input_key = f"{key}:inputs"
-    output_key = f"{key}:outputs"
+    input_key = "{}:inputs".format(method.__qualname__)
+    output_key = "{}:outputs".format(method.__qualname__)
 
-    inputs = cache._redis.lrange(input_key, 0, -1)
-    outputs = cache._redis.lrange(output_key, 0, -1)
+    inputs = method.__self__._redis.lrange(input_key, 0, -1)
+    outputs = method.__self__._redis.lrange(output_key, 0, -1)
 
-    print(f"{key} was called {len(inputs)} times:")
-
-    for input_data, output_data in zip(inputs, outputs):
-        input_data_str = input_data.decode("utf-8")
-        output_data_str = output_data.decode("utf-8")
-        print(f"{key}(*{input_data_str}) -> {output_data_str}")
+    print("{} was called {} times:".format(method.__qualname__, len(inputs)))
+    for inp, out in zip(inputs, outputs):
+        print(
+            "{}(*{}) -> {}".format(
+                method.__qualname__, inp.decode("utf-8"), out.decode("utf-8")
+            )
+        )
 
 
 class Cache:
