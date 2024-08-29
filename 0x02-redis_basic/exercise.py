@@ -105,10 +105,8 @@ class Cache:
             Returns None if the key does not exist.
         """
         data = self._redis.get(key)
-        if data is None:
-            return None
         if fn:
-            return fn(data)
+            data = fn(data)
         return data
 
     def get_str(self, key: str) -> Optional[str]:
@@ -122,7 +120,7 @@ class Cache:
             Optional[str]: Data converted to a string,
             or None if the key does not exist.
         """
-        return self.get(key, lambda d: d.decode('utf-8'))
+        return self.get(key, fn=str)
 
     def get_int(self, key: str) -> Optional[int]:
         """
@@ -135,4 +133,4 @@ class Cache:
             Optional[int]: Data converted to an int,
             or None if the key does not exist.
         """
-        return self.get(key, lambda d: int(d))
+        return self.get(key, fn=int)
