@@ -10,7 +10,7 @@ from typing import Union, Callable, Optional
 from functools import wraps
 
 
-def count_calls(method: Callable) -> Callable:
+def call_history(method: Callable) -> Callable:
     """
     Decorator that counts how many times a method is called.
     The count is stored in Redis using a key based on
@@ -26,8 +26,8 @@ def count_calls(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         """
-        Increments the call count for the decorated method,
-        then calls the original method.
+        Records the input args and output of the decorated
+        function in Redis lists.
 
         Args:
             self: Instance of the class to which the method belongs.
@@ -38,8 +38,17 @@ def count_calls(method: Callable) -> Callable:
             The result of the original method call.
         """
         key = method.__qualname__
-        self._redis.incr(key)
-        return method(self, *args, **kwargs)
+        input_key = f"{key}:inputs"
+        output_key = f"{key}:outputs"
+
+        normalized_args = str(args)
+        self._redis.rpush(input_key, normalized_args)
+
+        result = method(self, *args, **kwargs)
+
+        self._redis.rpush(output_key, str(result))
+
+        return result
 
     return wrapper
 
@@ -69,7 +78,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Stores the provided data in the Redis database with
