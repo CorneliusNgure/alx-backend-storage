@@ -1,11 +1,12 @@
-import redis
-import uuid
-from typing import Union
-
+#!/usr/bin/env python3
 """
 Module defines a Cache class that interacts with a
 Redis database.
 """
+
+import redis
+import uuid
+from typing import Union
 
 
 class Cache:
