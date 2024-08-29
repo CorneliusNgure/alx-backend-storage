@@ -1,12 +1,34 @@
 #!/usr/bin/env python3
 """
-Module defines a Cache class that interacts with a
+Module defines classes and methods that interacts with a
 Redis database.
 """
 
 import redis
 import uuid
 from typing import Union
+
+
+def count_calls(method: Callable) -> Callable:
+    """
+    Decorator that counts how many times a method is called.
+    The count is stored in Redis using a key based on
+    the method's qualified name.
+
+    Args:
+        method (Callable): The method to be decorated.
+
+    Returns:
+        Callable: The wrapped method with the counting
+        functionality.
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        key = f"{method.__qualname__}:calls"
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+
+    return wrapper
 
 
 class Cache:
