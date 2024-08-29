@@ -36,7 +36,7 @@ def count_calls(method: Callable) -> Callable:
         Returns:
             The result of the original method call.
         """
-        key = f"{method.__qualname__}:calls"
+        key = method.__qualname__
         self._redis.incr(key)
         return method(self, *args, **kwargs)
 
