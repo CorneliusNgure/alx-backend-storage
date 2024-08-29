@@ -10,6 +10,7 @@ from typing import Callable
 
 redis_client = redis.Redis()
 
+
 def cache_page(method: Callable) -> Callable:
     """
     Decorator to cache the result of the page fetch and count accesses.
@@ -38,6 +39,7 @@ def cache_page(method: Callable) -> Callable:
         return result
 
     return wrapper
+
 
 @cache_page
 def get_page(url: str) -> str:
