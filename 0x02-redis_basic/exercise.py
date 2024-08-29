@@ -6,7 +6,8 @@ Redis database.
 
 import redis
 import uuid
-from typing import Union
+from typing import Union, Callable, Optional
+from functools import wraps
 
 
 def count_calls(method: Callable) -> Callable:
@@ -68,6 +69,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Stores the provided data in the Redis database with
