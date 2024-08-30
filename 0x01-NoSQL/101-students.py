@@ -4,8 +4,6 @@ Returns all students sorted by average score from a
 MongoDB collection.
 """
 
-from pymongo import MongoClient
-
 
 def top_students(mongo_collection):
     """
@@ -21,23 +19,29 @@ def top_students(mongo_collection):
         student's data and their average score, sorted by
         average score in descending order.
     """
-
-    pipeline = [
-        {
-            "$project": {
-                "name": 1,
-                "averageScore": {
-                    "$avg": "$scores"
-                }
-            }
-        },
-        {
-            "$sort": {
-                "averageScore": -1
-            }
-        }
-    ]
-
-    result = list(mongo_collection.aggregate(pipeline))
-
-    return result
+    # Fetch all students from the collection
+    students = mongo_collection.find()
+    
+    # Prepare a list to hold student data with average scores
+    student_scores = []
+    
+    for student in students:
+        # Calculate the average score
+        topics = student.get('topics', [])
+        if not topics:
+            average_score = 0
+        else:
+            total_score = sum(topic['score'] for topic in topics)
+            average_score = total_score / len(topics)
+        
+        # Create a dictionary with student ID, name, and average score
+        student_scores.append({
+            '_id': student['_id'],
+            'name': student['name'],
+            'averageScore': average_score
+        })
+    
+    # Sort the list of students by average score in descending order
+    sorted_students = sorted(student_scores, key=lambda x: x['averageScore'], reverse=True)
+    
+    return sorted_students
