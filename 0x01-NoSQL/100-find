@@ -1,8 +1,2 @@
-#!/bin/bash
-
-# Script to list all documents with name starting by "Holberton" in the collection school
-
-# Database name passed as an option to the mongo command
-DB_NAME="$1"
-
-echo 'db.school.find({ name: { $regex: "^Holberton" } })' | mongo "$DB_NAME"
+# Find documents with name starting by "Holberton"
+db.school.find({ name: { $regex: "^Holberton" } }).pretty()
